@@ -1,0 +1,8 @@
+{
+    "python.analysis.extraPaths": [".venv/lib/python3.13/site-packages"],
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "python.analysis.include": [
+        "${workspaceFolder}/.venv"
+    ]
+}
