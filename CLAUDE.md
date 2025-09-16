@@ -27,14 +27,18 @@ The project uses Poetry with `package-mode = false` for dependency-only manageme
 
 ```
 ai-agents/
-├── 1-lesson/           # Learning materials and examples
+├── 1-lesson/           # Lesson 1: OpenAI API basics
 │   └── main.py        # OpenAI API example script
+├── 4-lesson/           # Lesson 4: N8N automation
+│   ├── Dockerfile     # N8N custom container with finance packages
+│   ├── docker-compose.yml # N8N + Redis orchestration
+│   └── 4-lesson.json  # N8N workflow configuration
 ├── .vscode/           # VS Code configuration
 │   └── settings.json  # Python interpreter and analysis paths
 ├── pyproject.toml     # Poetry configuration with dependencies
 ├── poetry.lock        # Locked dependency versions
 ├── Dockerfile         # Python 3.13 container setup
-├── docker-compose.yml # Container orchestration
+├── docker-compose.yml # Python container orchestration
 └── README.md          # Project documentation
 ```
 
@@ -46,6 +50,8 @@ The project is configured for VS Code with Docker:
 - Python interpreter configured for container environment
 
 ## Development Commands
+
+### Python Development (Lessons 1-3)
 
 **Install dependencies:**
 ```bash
@@ -60,6 +66,24 @@ docker exec -it ai_agents python /app/1-lesson/main.py
 **Run with Poetry:**
 ```bash
 docker exec -it ai_agents poetry run python /app/1-lesson/main.py
+```
+
+### N8N Development (Lesson 4)
+
+**Start N8N with Redis:**
+```bash
+cd 4-lesson
+docker-compose up -d
+```
+
+**Access N8N interface:**
+- URL: http://localhost:5678
+- Redis available at localhost:6379
+
+**Stop N8N services:**
+```bash
+cd 4-lesson
+docker-compose down
 ```
 
 ## Notes for Development

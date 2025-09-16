@@ -1,0 +1,250 @@
+{
+  "name": "4-lesson",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -352,
+        -80
+      ],
+      "id": "376ff5f3-8431-4807-b124-e702fc2ac0ec",
+      "name": "When chat message received",
+      "webhookId": "4a5a1270-9fb6-4939-b602-ffedbc7de9d5",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a financial assistant specialized in stock analysis. Your task is to:\n\n  1. Extract the stock ticker symbol from the user's message\n  2. Search for and retrieve current, up-to-date information about this stock from reliable financial data sources:\n     - Current price (current_price)\n     - P/E ratio (pe_ratio)\n     - EPS - earnings per share (eps)\n  3. Return the data in JSON format\n\n  IMPORTANT: Always fetch the most recent data available. Do not use cached or outdated information.\n\n  Response JSON format without code block:\n  {\"ticker\": \"SYMBOL\",\"current_price\": 123.45,\"pe_ratio\": 15.67,\"eps\": 8.23,\"currency\": \"USD\",\"last_updated\": \"2024-01-15T10:30:00Z\"}\n\n  If some data is not available, use null. If the ticker is not clear in the user's message or doesn't exist, return an error message in this format:\n  {\n    \"error\": \"Ticker symbol not found or invalid\",\n    \"message\": \"Description of the problem\"\n  }\n\n  User message:"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -80
+      ],
+      "id": "c32859be-3a99-4c25-a7f8-1f4ffb8d768e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-oss:20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        208
+      ],
+      "id": "9ef5a375-3ba6-439a-b3af-40f05c57076d",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "Y4DZHgymkDZEIDod",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        16,
+        208
+      ],
+      "id": "a9445fcc-8e30-42b7-96e7-fccf710f7a04",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "HmClVJ1qiWus2JWV",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "max_results": 5
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        224,
+        208
+      ],
+      "id": "65b402b5-c163-4bc4-ae6f-74404917741f",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "v2nRtpAsE0dWUsZd",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1fcc01e9-430e-4614-9e74-12d530cc0039",
+              "leftValue": "={{ $json.output.parseJson().current_price }}",
+              "rightValue": 500,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        -80
+      ],
+      "id": "75c5293e-7391-4419-b728-c3ccd73b5610",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "message": "The price is increasing 🙂",
+        "waitUserReply": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -176
+      ],
+      "id": "2ea10383-4be7-4e2c-8403-e75adb469615",
+      "name": "Respond to Chat"
+    },
+    {
+      "parameters": {
+        "message": "The price is decreasing 🙁",
+        "waitUserReply": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        480,
+        48
+      ],
+      "id": "6d2d95e8-f61c-42a4-8d90-3a98373dd91f",
+      "name": "Respond to Chat1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a2c88e3a-ad94-4212-aaf6-d538119bb65e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7ccf0420344c0ff715eadca4dc1e37ee451247557165ee8fa8d0b4f86a38777f"
+  },
+  "id": "7v8N0SisYAPzGUa7",
+  "tags": []
+}
