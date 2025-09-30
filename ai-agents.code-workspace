@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "AI Agents",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"4-lesson/n8n_data/**": true,
+		},
+		"search.exclude": {
+			"4-lesson/n8n_data/**": true,
+			"poetry.lock": true
+		}
+	},
+}

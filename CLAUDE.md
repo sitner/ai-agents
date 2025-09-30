@@ -55,7 +55,7 @@ The project is configured for VS Code with Docker:
 
 **Install dependencies:**
 ```bash
-docker exec -it ai_agents poetry install
+docker exec ai_agents poetry install
 ```
 
 **Run Python scripts:**

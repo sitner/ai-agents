@@ -4,5 +4,19 @@
     "files.autoSaveDelay": 1000,
     "python.analysis.include": [
         "${workspaceFolder}/.venv"
-    ]
+    ],
+    "python.terminal.activateEnvironment": false,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.formatOnType": false,
+        "editor.formatOnPaste": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
+    "black-formatter.importStrategy": "useBundled",
+    "black-formatter.args": ["--line-length=88"],
+    "black-formatter.interpreter": ["/opt/homebrew/bin/python3"]
 }
