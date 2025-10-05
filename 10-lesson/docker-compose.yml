@@ -1,0 +1,11 @@
+services:
+  ai-agent:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: ai_agents_lesson10
+    volumes:
+      - ..:/app
+    working_dir: /app/10-lesson
+    stdin_open: true
+    tty: true
