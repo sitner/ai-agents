@@ -8,13 +8,16 @@ This is an AI agents project repository for learning and developing AI agents. T
 
 ## Development Environment
 
-The project uses Docker for development with Python 3.13 as the base runtime environment.
+The project uses Docker for development with Python 3.13 as the base runtime environment. Each lesson has its own `docker-compose.yml` for isolated development environments.
 
 ### Docker Setup
-- **Image**: Python 3.13 official image
+- **Base Image**: Python 3.13 official image
 - **Package Manager**: Poetry (installed in container)
-- **Container Name**: `ai_agents`
-- **Working Directory**: `/app`
+- **Container Names**:
+  - Lesson 1: `ai_agents_lesson1`
+  - Lesson 7: `ai_agents_lesson7`
+  - Lesson 10: `ai_agents_lesson10`
+- **Working Directory**: `/app/{lesson-folder}`
 
 ## Dependencies
 
@@ -35,7 +38,8 @@ The project uses Poetry with `package-mode = false` for dependency-only manageme
 ```
 ai-agents/
 ├── 1-lesson/           # Lesson 1: OpenAI API basics
-│   └── main.py        # OpenAI API example script
+│   ├── main.py        # OpenAI API example script
+│   └── docker-compose.yml  # Container setup for lesson 1
 ├── 4-lesson/           # Lesson 4: N8N automation
 │   ├── Dockerfile     # N8N custom container with finance packages
 │   ├── docker-compose.yml # N8N + Redis orchestration
@@ -62,8 +66,7 @@ ai-agents/
 │   └── settings.json  # Python interpreter and analysis paths
 ├── pyproject.toml     # Poetry configuration with dependencies
 ├── poetry.lock        # Locked dependency versions
-├── Dockerfile         # Python 3.13 container setup
-├── docker-compose.yml # Python container orchestration
+├── Dockerfile         # Python 3.13 container setup (shared)
 └── README.md          # Project documentation
 ```
 
@@ -76,21 +79,28 @@ The project is configured for VS Code with Docker:
 
 ## Development Commands
 
-### Python Development (Lessons 1-3)
+### Python Development (Lesson 1)
+
+**Start container:**
+```bash
+cd 1-lesson
+docker-compose up -d
+```
 
 **Install dependencies:**
 ```bash
-docker exec ai_agents poetry install
+docker exec ai_agents_lesson1 poetry install
 ```
 
 **Run Python scripts:**
 ```bash
-docker exec -it ai_agents python /app/1-lesson/main.py
+docker exec ai_agents_lesson1 poetry run python main.py
 ```
 
-**Run with Poetry:**
+**Stop container:**
 ```bash
-docker exec -it ai_agents poetry run python /app/1-lesson/main.py
+cd 1-lesson
+docker-compose down
 ```
 
 ### N8N Development (Lesson 4)
@@ -174,8 +184,16 @@ docker-compose down
 
 ## Notes for Development
 
+- **Each lesson has its own docker-compose.yml** for isolated environments
 - Dependencies are installed in Docker container, not host system
 - VS Code configured to recognize packages in container via `python.analysis.extraPaths`
 - Poetry configured with `package-mode = false` for script-only development
 - All Python execution should happen within Docker container
 - Environment variables should be loaded from .env files using python-dotenv
+- Shared `Dockerfile` in root is used by all lessons (built from parent context)
+
+### Commit Messages
+- Write in English using past tense (e.g., "Fixed authentication timeout issue")
+- **Commit messages should be up to 4 sentence descriptions** that primarily focus on explaining **why** a change was made, not what was changed (since that's visible in the diff)
+- **Avoid bullet points or lists in commit messages** - write coherent sentences that describe the reasoning behind the changes
+- Include task codes at the end of the commit message when applicable (e.g., "#RCC-4696")
